@@ -12,6 +12,7 @@ import re
 import sys
 import os
 import pluginloader
+import json
 
 if sys.platform == "win32":
   # On Windows, sys.stdout is initially opened in text mode, which means that
@@ -156,9 +157,10 @@ def refresh_hg_submodule(name,subrepo_info):
     subrepo_cache[name]=(load_cache(gitRepoLocation+"/hg2git-mapping"),
                          load_cache(gitRepoLocation+"/hg2git-marks",
                                     lambda s: int(s)-1))
-    sys.stderr.write("Printing out subrepo_cache for %s" % (name));
-    for k in subrepo_cache[name]:
-      sys.stderr.write("  %s -> %s\n" % (k, subrepo_cache[name][k]))
+    sys.stderr.write("Printing out subrepo_cache for %s" % (name))
+    sys.stderr.write(json.dumps(subrepo_cache))
+    # for k in subrepo_cache[name]:
+    #   sys.stderr.write("  %s -> %s\n" % (k, subrepo_cache[name][k]))
     sys.stderr.write("subrepo_cache contains %d entries\n", len(subrepo_cache[name]))  
 
   (mapping_cache,marks_cache)=subrepo_cache[name]
