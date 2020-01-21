@@ -157,8 +157,8 @@ def refresh_hg_submodule(name,subrepo_info):
                          load_cache(gitRepoLocation+"/hg2git-marks",
                                     lambda s: int(s)-1))
     sys.stderr.write("Printing out subrepo_cache for %s" % (name));
-    for k, v in subrepo_cache[name].items():
-      sys.stderr.write("  %s -> %s\n" % (k, v))
+    for k in subrepo_cache[name]:
+      sys.stderr.write("  %s -> %s\n" % (k, subrepo_cache[name][k]))
     sys.stderr.write("subrepo_cache contains %d entries\n", len(subrepo_cache[name]))  
 
   (mapping_cache,marks_cache)=subrepo_cache[name]
