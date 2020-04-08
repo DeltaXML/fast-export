@@ -164,8 +164,13 @@ def refresh_hg_submodule(name,subrepo_info):
     subrepo_cache[name]=(load_cache(gitRepoLocation+b"/hg2git-mapping"),
                          load_cache(gitRepoLocation+b"/hg2git-marks",
                                     lambda s: int(s)-1))
+  if not b"cpd" in subrepo_cache:
+    subrepo_cache[b"cpd"]=(load_cache(b"../codegen-pipelines-dita/.git/hg2git-mapping"),
+                         load_cache(b"../codegen-pipelines-dita/.git/hg2git-marks",
+                                    lambda s: int(s)-1))
 
   (mapping_cache,marks_cache)=subrepo_cache[name]
+  (mapping_cache_cpd,marks_cache_cpd)=subrepo_cache[b"cpd"]
   subrepo_hash=subrepo_info[1]
   if subrepo_hash in mapping_cache:
     revnum=mapping_cache[subrepo_hash]
@@ -177,6 +182,15 @@ def refresh_hg_submodule(name,subrepo_info):
     )
     return b'[submodule "%s"]\n\tpath = %s\n\turl = %s\n' % (name,name,
       submodule_mappings[name])
+  elif subrepo_hash in mapping_cache_cpd:
+    revnum=mapping_cache_cpd[subrepo_hash]
+    gitSha=marks_cache_cpd[int(revnum)]
+    wr(b'M 160000 %s %s' % (gitSha,name))
+    stderr_buffer.write(
+      b"Adding/updating submodule %s, revision %s->%s\n"
+      % (name, subrepo_hash, gitSha)
+    )
+    return b'[submodule "%s_cpd"]\n\tpath = %s\n\turl = ../codegen-pipelines-dita\n' % (name,name)
   else:
     stderr_buffer.write(
       b"Warning: Could not find hg revision %s for %s in git %s\n"
